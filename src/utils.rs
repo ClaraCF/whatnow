@@ -1,6 +1,6 @@
-use std::{io, fs};
 use std::env;
 use std::path::{Path, PathBuf};
+use std::{fs, io};
 
 pub fn can_read_dir(dir: &Path) -> io::Result<bool> {
     match fs::read_dir(dir) {
@@ -11,9 +11,7 @@ pub fn can_read_dir(dir: &Path) -> io::Result<bool> {
 }
 
 #[cfg(windows)]
-fn get_config_home() -> Option<PathBuf> {
-
-}
+fn get_config_home() -> Option<PathBuf> {}
 
 #[cfg(unix)]
 pub fn get_config_home() -> Option<PathBuf> {

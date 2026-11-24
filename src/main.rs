@@ -5,13 +5,17 @@ mod utils;
 mod domain;
 mod cli;
 
+use domain::task::Task;
+use domain::checklist::Checklist;
+
 fn main() {
     // Parse cli arguments
     //let cli = cli::Cli::parse();
+    
+    let data_home = utils::get_data_home().expect("a data home");
 
-    if let Some(config_home) = utils::get_config_home() {
-        println!("Config home is: <{}>", config_home.display());
-    } else {
-        println!("We got no config home");
-    }
+    let checklist = Checklist::from_disk(data_home.join("Tarea.json")).unwrap();
+
+    println!("{:#?}", checklist);
 }
+

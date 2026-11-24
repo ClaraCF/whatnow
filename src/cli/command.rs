@@ -1,5 +1,5 @@
-use clap::{Parser, Subcommand};
 use chrono::NaiveDate;
+use clap::{Parser, Subcommand};
 
 use crate::domain::checklist::ChecklistId;
 use crate::domain::task::TaskId;
@@ -25,8 +25,8 @@ enum Command {
     #[command(about = help::task::ABOUT, long_about = help::task::LONG_ABOUT)]
     Task {
         #[command(subcommand)]
-        subcommand: TaskSubcommand
-    }
+        subcommand: TaskSubcommand,
+    },
 }
 
 #[derive(Subcommand)]
@@ -37,9 +37,7 @@ enum ChecklistSubcommand {
         long_about = help::checklist::create::LONG_ABOUT,
         after_help = help::checklist::create::AFTER_HELP,
     )]
-    Create {
-        name: String,
-    },
+    Create { name: String },
 
     #[command(
         about = help::checklist::list::ABOUT,
@@ -53,19 +51,14 @@ enum ChecklistSubcommand {
         long_about = help::checklist::rename::LONG_ABOUT,
         after_help = help::checklist::rename::AFTER_HELP,
     )]
-    Rename {
-        id: ChecklistId,
-        new_name: String,
-    },
+    Rename { id: ChecklistId, new_name: String },
 
     #[command(
         about = help::checklist::delete::ABOUT,
         long_about = help::checklist::delete::LONG_ABOUT,
         after_help = help::checklist::delete::AFTER_HELP,
     )]
-    Delete {
-        id: ChecklistId,
-    }
+    Delete { id: ChecklistId },
 }
 
 #[derive(Subcommand)]
@@ -121,39 +114,30 @@ enum TaskSubcommand {
         long_about = help::task::check::LONG_ABOUT,
         after_help = help::task::check::AFTER_HELP,
     )]
-    Check {
-        id: TaskId,
-    },
+    Check { id: TaskId },
 
     #[command(
         about = help::task::uncheck::ABOUT,
         long_about = help::task::uncheck::LONG_ABOUT,
         after_help = help::task::uncheck::AFTER_HELP,
     )]
-    Uncheck {
-        id: TaskId,
-    },
+    Uncheck { id: TaskId },
 
     #[command(
         about = help::task::toggle::ABOUT,
         long_about = help::task::toggle::LONG_ABOUT,
         after_help = help::task::toggle::AFTER_HELP,
     )]
-    Toggle {
-        id: TaskId,
-    },
+    Toggle { id: TaskId },
 
     #[command(
         about = help::task::delete::ABOUT,
         long_about = help::task::delete::LONG_ABOUT,
         after_help = help::task::delete::AFTER_HELP,
     )]
-    Delete {
-        id: TaskId,
-    },
+    Delete { id: TaskId },
 }
 
 fn parse_date(s: &str) -> Result<NaiveDate, String> {
-    NaiveDate::parse_from_str(s, "%d-%m-%Y")
-        .map_err(|e| format!("expected DD-MM-YYYY ({e})"))
+    NaiveDate::parse_from_str(s, "%d-%m-%Y").map_err(|e| format!("expected DD-MM-YYYY ({e})"))
 }
