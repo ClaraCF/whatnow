@@ -1,9 +1,13 @@
 use clap::{Parser, Subcommand};
 use chrono::NaiveDate;
 
-/// Yet another simple checklists tool
+use crate::domain::checklist::ChecklistId;
+use crate::domain::task::TaskId;
+
+use super::help;
+
 #[derive(Parser)]
-#[command(version, about, long_about = None)]
+#[command(version, about = help::CLI_ABOUT, long_about = help::CLI_LONG_ABOUT)]
 #[command(propagate_version = true)]
 pub struct Cli {
     #[command(subcommand)]
@@ -12,13 +16,13 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 enum Command {
-    /// Manage checklists
+    #[command(about = help::checklist::ABOUT, long_about = help::checklist::LONG_ABOUT)]
     Checklist {
         #[command(subcommand)]
         subcommand: ChecklistSubcommand,
     },
 
-    /// Manage individual tasks
+    #[command(about = help::task::ABOUT, long_about = help::task::LONG_ABOUT)]
     Task {
         #[command(subcommand)]
         subcommand: TaskSubcommand
@@ -26,94 +30,128 @@ enum Command {
 }
 
 #[derive(Subcommand)]
+#[command(about = help::checklist::ABOUT, long_about = help::checklist::LONG_ABOUT)]
 enum ChecklistSubcommand {
-    /// Create a checklist
+    #[command(
+        about = help::checklist::create::ABOUT,
+        long_about = help::checklist::create::LONG_ABOUT,
+        after_help = help::checklist::create::AFTER_HELP,
+    )]
     Create {
         name: String,
     },
 
-    /// Print all available checklists and their IDs
+    #[command(
+        about = help::checklist::list::ABOUT,
+        long_about = help::checklist::list::LONG_ABOUT,
+        after_help = help::checklist::list::AFTER_HELP,
+    )]
     List,
 
-    /// Rename a checklist
+    #[command(
+        about = help::checklist::rename::ABOUT,
+        long_about = help::checklist::rename::LONG_ABOUT,
+        after_help = help::checklist::rename::AFTER_HELP,
+    )]
     Rename {
-        id: u32,
+        id: ChecklistId,
         new_name: String,
     },
 
-    /// Delete a checklist
+    #[command(
+        about = help::checklist::delete::ABOUT,
+        long_about = help::checklist::delete::LONG_ABOUT,
+        after_help = help::checklist::delete::AFTER_HELP,
+    )]
     Delete {
-        id: u32,
+        id: ChecklistId,
     }
 }
 
 #[derive(Subcommand)]
+#[command(about = help::task::ABOUT, long_about = help::task::LONG_ABOUT)]
 enum TaskSubcommand {
-    /// Add a task to a specific checklist
+    #[command(
+        about = help::task::add::ABOUT,
+        long_about = help::task::add::LONG_ABOUT,
+        after_help = help::task::add::AFTER_HELP,
+    )]
     Add {
-        /// Checklist 
-        checklist: Option<String>,
         description: String,
+        checklist: Option<ChecklistId>,
         priority: Option<i32>,
         deadline: Option<NaiveDate>,
     },
 
-    /// List tasks in a specific checklist
+    #[command(
+        about = help::task::list::ABOUT,
+        long_about = help::task::list::LONG_ABOUT,
+        after_help = help::task::list::AFTER_HELP,
+    )]
     List {
-        checklist: Option<String>,
-        print_id: Option<bool>,
+        checklist: Option<ChecklistId>,
+        //TODO: print_id: Option<bool>,
         // TODO: Add filter options
     },
 
-    /// Edit an existing task
+    #[command(
+        about = help::task::edit::ABOUT,
+        long_about = help::task::edit::LONG_ABOUT,
+        after_help = help::task::edit::AFTER_HELP,
+    )]
     Edit {
-        id: u32,
+        id: TaskId,
         description: Option<String>,
         priority: Option<i32>,
         deadline: Option<NaiveDate>,
     },
 
-    /// Move tasks from one checklist to another
+    #[command(
+        about = help::task::move_::ABOUT,
+        long_about = help::task::move_::LONG_ABOUT,
+        after_help = help::task::move_::AFTER_HELP,
+    )]
     Move {
-        id: u32,
-        new_checklist: u32,
+        id: TaskId,
+        new_checklist: ChecklistId,
     },
 
-    /// Mark a task as complete
-    #[command(long_about = "Mark a task as complete. Does nothing if the task is already cheked")]
+    #[command(
+        about = help::task::check::ABOUT,
+        long_about = help::task::check::LONG_ABOUT,
+        after_help = help::task::check::AFTER_HELP,
+    )]
     Check {
-        id: u32,
+        id: TaskId,
     },
 
-    /// Mark a task as incomplete
-    #[command(long_about = "Mark a task as complete. Does nothing if the task is already unchecked")]
+    #[command(
+        about = help::task::uncheck::ABOUT,
+        long_about = help::task::uncheck::LONG_ABOUT,
+        after_help = help::task::uncheck::AFTER_HELP,
+    )]
     Uncheck {
-        id: u32,
+        id: TaskId,
     },
 
-    /// Toggle a task between complete and incomplete
+    #[command(
+        about = help::task::toggle::ABOUT,
+        long_about = help::task::toggle::LONG_ABOUT,
+        after_help = help::task::toggle::AFTER_HELP,
+    )]
     Toggle {
-        id: u32,
+        id: TaskId,
     },
 
-    /// Delete a task
+    #[command(
+        about = help::task::delete::ABOUT,
+        long_about = help::task::delete::LONG_ABOUT,
+        after_help = help::task::delete::AFTER_HELP,
+    )]
     Delete {
-        id: u32,
+        id: TaskId,
     },
 }
-
-struct Checklist {
-    id: u32,
-    name: String,
-}
-
-struct Task {
-    id: u32,
-    description: String,
-    priority: Option<i32>,
-    deadline: Option<NaiveDate>
-}
-
 
 fn parse_date(s: &str) -> Result<NaiveDate, String> {
     NaiveDate::parse_from_str(s, "%d-%m-%Y")
